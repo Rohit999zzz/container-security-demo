@@ -2,7 +2,7 @@
 FROM alpine:3.18
 
 # Install Python (note: alpine uses 'apk' not 'apt')
-RUN apk add --no-cache python3=3.11.4-r0
+RUN apk add --no-cache python3
 
 # Copy app files
 COPY . /app
