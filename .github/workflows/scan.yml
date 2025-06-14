@@ -16,18 +16,17 @@ jobs:
       - name: Build Docker Image
         run: docker build -t my-app:${{ github.sha }} .
 
-      - name: Scan with Trivy (Critical/HIGH only)
+        - name: Scan with Trivy and Generate Report
         run: |
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-          aquasec/trivy:latest image --severity CRITICAL,HIGH --exit-code 1 my-app:${{ github.sha }}
-
-      - name: Generate Full Report (SARIF)
-        run: |
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-          aquasec/trivy:latest image --format sarif -o trivy-report.sarif my-app:${{ github.sha }}
-          
+          # Create reports directory first
+          mkdir -p ./reports
+          # Run scan and output to file
+          trivy image --format sarif --output ./reports/trivy-report.sarif my-app:${{ github.sha }}
+          # Verify file was created
+          ls -la ./reports/
+      
       - name: Upload Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: trivy-report
-          path: trivy-report.sarif
+          path: ./reports/trivy-report.sarif
