@@ -1,14 +1,14 @@
-# Stage 1: Use vulnerable image for testing (intentional)
-FROM alpine:3.10 AS vulnerable
+# Correct syntax
+FROM alpine:3.18
 
-# Install outdated Python (for demonstration)
-RUN apk add --no-cache python3=3.6.9-r1
+# Install Python (note: alpine uses 'apk' not 'apt')
+RUN apk add --no-cache python3=3.11.4-r0
 
 # Copy app files
 COPY . /app
 
-# Set working directory (recommended)
+# Set working directory
 WORKDIR /app
 
-# Run command (use absolute path)
-CMD ["python3", "/app/app.py"]
+# Run command
+CMD ["python3", "app.py"]
