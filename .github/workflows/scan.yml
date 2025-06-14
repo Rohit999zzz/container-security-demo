@@ -16,7 +16,7 @@ jobs:
       - name: Build Docker Image
         run: docker build -t my-app:${{ github.sha }} .
 
-        - name: Scan with Trivy and Generate Report
+      - name: Scan with Trivy and Generate Report
         run: |
           # Create reports directory first
           mkdir -p ./reports
@@ -26,7 +26,7 @@ jobs:
           ls -la ./reports/
       
       - name: Upload Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: trivy-report
           path: ./reports/trivy-report.sarif
