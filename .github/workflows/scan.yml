@@ -1,0 +1,33 @@
+name: Container Security Scan
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -t my-app:${{ github.sha }} .
+
+      - name: Scan with Trivy (Critical/HIGH only)
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+          aquasec/trivy:latest image --severity CRITICAL,HIGH --exit-code 1 my-app:${{ github.sha }}
+
+      - name: Generate Full Report (SARIF)
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+          aquasec/trivy:latest image --format sarif -o trivy-report.sarif my-app:${{ github.sha }}
+          
+      - name: Upload Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-report
+          path: trivy-report.sarif
