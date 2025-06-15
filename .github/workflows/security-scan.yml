@@ -13,6 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Install Trivy
+        run: |
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install -y trivy
+      
       - name: Build Test Image
         run: docker build -t test-image -f Dockerfile.${{ matrix.image }} .
           
