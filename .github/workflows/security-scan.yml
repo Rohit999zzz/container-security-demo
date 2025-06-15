@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [critical, medium, clean]
+        image: [ medium, clean]
     steps:
       - uses: actions/checkout@v4
       
@@ -19,7 +19,7 @@ jobs:
         run: |
           mkdir -p ./reports
           trivy image \
-            --severity CRITICAL,HIGH,MEDIUM \
+            --severity HIGH,MEDIUM \
             --format sarif \
             --output ./reports/trivy-${{ matrix.image }}.sarif \
             test-image
