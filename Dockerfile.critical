@@ -1,3 +1,3 @@
 # Dockerfile.critical
-FROM alpine:3.4  # Contains CVE-2021-36159 (libfetch)
-RUN apk add --no-cache curl=7.50.3-r0 
+FROM alpine:3.4 AS base
+RUN apk add --no-cache curl=7.50.3-r0
