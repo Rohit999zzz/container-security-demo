@@ -1,0 +1,41 @@
+name: Security Scan Matrix
+
+on: [push, workflow_dispatch]
+
+jobs:
+  scan-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [critical, medium, clean]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build Test Image
+        run: |
+          docker build -t test-image -f Dockerfile.${{ matrix.image }} .
+          
+      - name: Run Trivy Scan
+        run: |
+          mkdir -p ./reports
+          trivy image \
+            --severity CRITICAL,HIGH,MEDIUM \
+            --format sarif \
+            --output ./reports/trivy-${{ matrix.image }}.sarif \
+            test-image
+          
+          # Store results in JSON for metrics
+          trivy image --format json -o ./reports/trivy-${{ matrix.image }}.json test-image
+          
+      - name: Upload Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-reports
+          path: |
+            ./reports/trivy-*.sarif
+            ./reports/trivy-*.json
+
+      - name: Validate Results
+        run: |
+          chmod +x .github/scripts/validate-scan.sh
+          ./.github/scripts/validate-scan.sh ${{ matrix.image }} 
