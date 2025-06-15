@@ -1,3 +1,0 @@
-# Dockerfile.critical
-FROM alpine:3.4 AS base
-RUN apk add --no-cache curl=7.50.3-r0
