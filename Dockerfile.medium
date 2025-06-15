@@ -1,2 +1,2 @@
 # Dockerfile.medium
-FROM node:12.22.1  # Outdated Node.js 
+FROM node:12.22.1
